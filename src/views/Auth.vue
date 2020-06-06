@@ -1,34 +1,41 @@
 <template>
-    <div class="auth">
-        <form class="form" @submit.prevent="onSubmit">
-            <input required type="text" class="form__login" v-model="login">
-            <input required type="password" class="form__password" v-model="password">
-            <input type="submit" value="Login">
-        </form>
+    <div class="container-auth">
+        <div class="auth">
+            <form class="auth__form form" @submit.prevent="onSubmit">
+                <input required type="text" placeholder="Username" class="form__username" v-model="username">
+                <input required type="password" placeholder="Password" class="form__password" v-model="password">
+                <input type="submit" class="form__submit" value="Login">
+            </form>
+            <span :class="{ hidden: !error }" class="auth-error">Incorrect username or password</span>
+        </div>
     </div>
 </template>
 
 <script>
     export default {
         name: 'Auth',
-        data() {
+        data () {
             return {
-                login: null,
+                username: null,
                 password: null,
-                emptyLogin: false,
-                emptyPassword: false
+                error: false
             }
         },
         methods: {
-            checkForm() {
-                if (!this.login) this.emptyLogin = true;
-                if (!this.password) this.emptyPassword = true;
-            },
             onSubmit() {
-                // this.checkForm();
-                // if (this.emptyLogin || this.emptyPassword) return;
-                // this.$store.dispatch
-                console.log('try to login');
+                const { username, password } = this;
+                this.$store.dispatch('login', { username, password })
+                    .then(() => this.$router.push({ name: 'home' }))
+                    .catch(err => {
+                        this.error = true;
+                        this.username = '';
+                        this.password = '';
+                    });
+            }
+        },
+        watch: {
+            username(newValue, oldValue) {
+                if (!oldValue) this.error = false;
             }
         },
     }
