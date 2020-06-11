@@ -37,7 +37,8 @@ export default {
       userList: [],
       fullUserList: null,
       debounce: null,
-      loading: false
+      loading: false,
+      ascOrderByID: true
     }
   },
   methods: {
@@ -75,7 +76,11 @@ export default {
         .then(() => this.$router.push({ name: 'auth' }));
     },
     filterItems (field) {
-      if (field === 'id') this.userList.sort((a, b) => a.id - b.id);
+      if (field === 'id') {
+        this.userList.sort((a, b) => a.id - b.id);
+        if (this.ascOrderByID) this.userList.reverse();
+        this.ascOrderByID = !this.ascOrderByID;
+      }
       else {
         this.userList.sort((a, b) => a[field].localeCompare(b[field]));
       }
